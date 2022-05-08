@@ -15,20 +15,20 @@ turtleContext.globalCompositeOperation = 'destination-over';
 // as lists of [x,y] pairs
 // (The shapes are borrowed from cpython turtle.py)
 var shapes = {
-    "triangle" : [[-5, 0], [5, 0], [0, 15]],
+    "triangle": [[-5, 0], [5, 0], [0, 15]],
     "turtle": [[0, 16], [-2, 14], [-1, 10], [-4, 7], [-7, 9],
-               [-9, 8], [-6, 5], [-7, 1], [-5, -3], [-8, -6],
-               [-6, -8], [-4, -5], [0, -7], [4, -5], [6, -8],
-               [8, -6], [5, -3], [7, 1], [6, 5], [9, 8],
-               [7, 9], [4, 7], [1, 10], [2, 14]],
+    [-9, 8], [-6, 5], [-7, 1], [-5, -3], [-8, -6],
+    [-6, -8], [-4, -5], [0, -7], [4, -5], [6, -8],
+    [8, -6], [5, -3], [7, 1], [6, 5], [9, 8],
+    [7, 9], [4, 7], [1, 10], [2, 14]],
     "square": [[10, -10], [10, 10], [-10, 10], [-10, -10]],
     "circle": [[10, 0], [9.51, 3.09], [8.09, 5.88],
-               [5.88, 8.09], [3.09, 9.51], [0, 10],
-               [-3.09, 9.51], [-5.88, 8.09], [-8.09, 5.88],
-               [-9.51, 3.09], [-10, 0], [-9.51, -3.09],
-               [-8.09, -5.88], [-5.88, -8.09], [-3.09, -9.51],
-               [-0.00, -10.00], [3.09, -9.51], [5.88, -8.09],
-               [8.09, -5.88], [9.51, -3.09]]
+    [5.88, 8.09], [3.09, 9.51], [0, 10],
+    [-3.09, 9.51], [-5.88, 8.09], [-8.09, 5.88],
+    [-9.51, 3.09], [-10, 0], [-9.51, -3.09],
+    [-8.09, -5.88], [-5.88, -8.09], [-3.09, -9.51],
+    [-0.00, -10.00], [3.09, -9.51], [5.88, -8.09],
+    [8.09, -5.88], [9.51, -3.09]]
 };
 
 // initialise the state of the turtle
@@ -94,13 +94,13 @@ function draw() {
         let icon = shapes.hasOwnProperty(turtle.shape) ?
             turtle.shape : "triangle";
         turtleContext.beginPath();
-        for (let i=0; i<shapes[icon].length; i++) {
+        for (let i = 0; i < shapes[icon].length; i++) {
             let coord = shapes[icon][i];
-            if (i==0) {
-                turtleContext.moveTo(x+coord[0], y+coord[1]);
+            if (i == 0) {
+                turtleContext.moveTo(x + coord[0], y + coord[1]);
             }
             else {
-                turtleContext.lineTo(x+coord[0], y+coord[1]);
+                turtleContext.lineTo(x + coord[0], y + coord[1]);
             }
         }
         turtleContext.closePath();
@@ -348,7 +348,7 @@ document.getElementById("command").addEventListener("keydown", (e) => {
 
 // Execute the program when the command box is changed
 // (when the user presses enter)
-document.querySelector('#command').addEventListener('change', function() {
+document.querySelector('#command').addEventListener('change', function () {
     var commandText = this.value;
     commandList.push(commandText);
     var definitionsText = document.querySelector('#definitions').value;
@@ -366,8 +366,74 @@ document.querySelector('#command').addEventListener('change', function() {
     }
 });
 
-document.querySelector('#resetButton').addEventListener('click', function() {
+document.querySelector('#resetButton').addEventListener('click', function () {
     reset();
 });
 
 reset();
+
+// var addEvent = document.addEventListener ? function(target,type,action){
+//     if(target){
+//         target.addEventListener(type,action,false);
+//     }
+// } : function(target,type,action){
+//     if(target){
+//         target.attachEvent('on' + type,action,false);
+//     }
+// }
+
+// addEvent(document,'keydown',function(e){
+//     e = e || window.event;
+//     var key = e.which || e.keyCode;
+//     if(key===84){
+//         forward(1);
+//     }
+// });
+
+var speed = 40;
+var thrust = 0;
+var rotation = 0;
+
+window.addEventListener("keydown", function (event) {
+    if (event.defaultPrevented) {
+        return; // Do nothing if event already handled
+    }
+    thrust = 0;
+    rotation = 0;
+
+    switch (event.code) {
+        case "KeyS":
+        case "ArrowDown":
+            // Handle "back"
+            thrust = -speed;
+            break;
+        case "KeyW":
+        case "ArrowUp":
+            // Handle "forward"
+            thrust = speed;
+            break;
+        case "KeyA":
+        case "ArrowLeft":
+            // Handle "turn left"
+            rotation = speed;
+            break;
+        case "KeyD":
+        case "ArrowRight":
+            // Handle "turn right"
+            rotation = -speed;
+            break;
+    }
+    loop();
+
+    refresh();
+
+    // Consume the event so it doesn't get handled twice
+    event.preventDefault();
+}, true);
+
+function loop() {
+    forward(thrust);
+    left(rotation);
+}
+window.requestAnimationFrame(loop)
+
