@@ -430,10 +430,17 @@ window.addEventListener("keydown", function (event) {
     // Consume the event so it doesn't get handled twice
     event.preventDefault();
 }, true);
+function randomInt(){
+    var max = 255;
+    var min = 0;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+
+}
 
 function loop() {
     forward(thrust);
     left(rotation);
+    colour(randomInt(),randomInt(),randomInt(),1);  
 }
 window.requestAnimationFrame(loop)
 
